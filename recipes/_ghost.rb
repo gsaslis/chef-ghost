@@ -3,6 +3,12 @@ remote_file "#{Chef::Config[:file_cache_path]}/ghost.zip" do
     not_if { ::File.exist?("#{Chef::Config[:file_cache_path]}/ghost.zip") }
 end
 
+if platform_family?('rhel', 'centos')
+    yum_package 'unzip'
+else platform_family?('debian', 'ubuntu')
+    apt_package 'unzip'
+end
+
 execute 'unzip' do
     user 'root'
     command "unzip #{Chef::Config[:file_cache_path]}/ghost.zip -d #{node['ghost-blog']['install_dir']}"
