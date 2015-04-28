@@ -23,6 +23,12 @@ default['ghost-blog']['version'] = 'latest'
 default['ghost-blog']['nginx']['dir'] = '/etc/nginx'
 default['ghost-blog']['nginx']['script_dir'] = '/usr/sbin'
 default['ghost-blog']['nginx']['server_name'] = 'ghostblog.com'
+case node['platform']
+when 'debian', 'ubuntu'
+    default['ghost-blog']['nginx']['conf_dir'] = '/etc/nginx/sites-available'
+when 'centos'
+    default['ghost-blog']['nginx']['conf_dir'] = '/etc/nginx/conf.d'
+end
 
 # Ghost app settings
 default['ghost-blog']['app']['server_url'] = 'localhost'

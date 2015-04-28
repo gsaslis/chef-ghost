@@ -7,7 +7,19 @@
 # All rights reserved - Do Not Redistribute
 #
 
- include_recipe 'nodejs'
- include_recipe 'ghost-blog::_nginx'
- include_recipe 'ghost-blog::_services'
- include_recipe 'ghost-blog::_ghost'
+case node['platform']
+when 'debian','ubuntu'
+    include_recipe 'ghost-blog::ubuntu'
+when 'centos'
+    include_recipe 'ghost-blog::centos'
+end
+
+service 'nginx' do
+    supports :start => true, :stop => true, :restart => true, :status => true
+    action   :nothing
+end
+
+service 'ghost' do
+    supports :start => true, :stop => true, :restart => true, :status => true
+    action :nothing
+end
