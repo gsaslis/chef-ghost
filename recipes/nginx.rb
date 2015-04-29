@@ -37,7 +37,6 @@ bash 'enable site config' do
     user 'root'
     cwd node['ghost-blog']['nginx']['conf_dir']
     code <<-EOH
-    nxdissite default.conf
     nxensite #{node['ghost-blog']['nginx']['server_name']}.conf
     EOH
     notifies :restart, 'service[nginx]', :immediately
