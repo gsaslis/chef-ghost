@@ -1,0 +1,88 @@
+N INIT INFO
+# Provides:          ghost
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Ghost Blogging Platform
+# Description:       Ghost: Just a blogging platform
+# Original:          http://docs.ghost.org/installation/deploy/
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin  
+DESC="Ghost"  
+NAME=ghost  
+DAEMON=`which node` 
+DAEMON_PATH=<%= node['ghost-blog']['install_dir'] %> 
+DAEMON_ARGS="$DAEMON_PATH/index.js"  
+DAEMON_USER=root 
+DAEMON_LOG=/var/log/ghost  
+PIDFILE=/var/run/$NAME.pid  
+SCRIPTNAME=/etc/init.d/$NAME  
+export NODE_ENV=production
+
+do_start()  
+{
+    printf "%-50s" "Starting $NAME..."
+    cd $DAEMON_PATH
+    touch $DAEMON_LOG
+    chown $DAEMON_USER $DAEMON_LOG
+    touch $PIDFILE
+    chown $DAEMON_USER $PIDFILE
+    exec su --session-command="$DAEMON $DAEMON_ARGS >> $DAEMON_LOG 2>&1 & echo \$! > $PIDFILE" $DAEMON_USER &
+    sleep 1
+    PID=`cat $PIDFILE`
+    if [ -z $PID ]; then
+        printf "%s\n" "Fail"
+    else
+        echo $PID > $PIDFILE
+        printf "%s\n" "Ok"
+    fi
+}
+
+case "$1" in  
+start)  
+        if [ -f $PIDFILE ]; then
+            PID=`cat $PIDFILE`
+            if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
+                do_start
+            else
+                echo "Already Running"
+            fi
+        else
+            do_start
+        fi
+;;
+status)  
+           printf "%-50s" "Checking $NAME..."
+        if [ -f $PIDFILE ]; then
+            PID=`cat $PIDFILE`
+            if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
+                printf "%s\n" "Process dead but pidfile exists"
+            else
+                echo "Running"
+            fi
+        else
+            printf "%s\n" "Service not running"
+        fi
+;;
+stop)  
+         printf "%-50s" "Stopping $NAME"
+            PID=`cat $PIDFILE`
+            cd $DAEMON_PATH
+        if [ -f $PIDFILE ]; then
+            kill -HUP $PID
+            printf "%s\n" "Ok"
+            rm -f $PIDFILE
+        else
+            printf "%s\n" "pidfile not found"
+        fi
+;;
+
+restart)  
+      $0 stop
+      $0 start
+;;
+
+*)
+        echo "Usage: $0 {status|start|stop|restart}"
+        exit 1
+esac

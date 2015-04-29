@@ -6,7 +6,6 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-
 case node['platform']
 when 'debian','ubuntu'
     include_recipe 'ghost-blog::ubuntu'

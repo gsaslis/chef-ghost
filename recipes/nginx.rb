@@ -7,12 +7,13 @@ when 'debian', 'ubuntu'
     end
 
 when 'centos'
-    
-    template '/etc/yum.repos.d/nginx.repo' do
-        source 'nginx.repo.erb'
-        owner 'root'
-        group 'root'
-    end
+
+   yum_repository 'nginx' do
+       description 'Nginx.org Repository'
+       baseurl "http://nginx.org/packages/centos/#{node['platform_version'].to_i}/$basearch/"
+       gpgkey 'http://nginx.org/keys/nginx_signing.key'
+       action :create
+   end
 end
 
 package 'nginx'
@@ -34,9 +35,9 @@ end
 
 bash 'enable site config' do
     user 'root'
-    cwd "#{node['ghost-blog']['nginx']['conf_dir']}"
+    cwd node['ghost-blog']['nginx']['conf_dir']
     code <<-EOH
-    nxdissite default
+    nxdissite default.conf
     nxensite #{node['ghost-blog']['nginx']['server_name']}.conf
     EOH
     notifies :restart, 'service[nginx]', :immediately
