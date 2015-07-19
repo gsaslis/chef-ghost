@@ -12,7 +12,7 @@ platforms:
       network:
       - ["private_network", {ip: 192.168.150.4}]
       customize:
-        cpus: 2
+        cpus: 4
         memory: 4096
 
   - name: ubuntu-14.04
@@ -20,7 +20,7 @@ platforms:
       network:
       - ["private_network", {ip: 192.168.150.4}]
       customize:
-        cpus: 2
+        cpus: 4
         memory: 4096
 
   - name: centos-7.0
@@ -28,7 +28,7 @@ platforms:
       network:
       - ["private_network", {ip: 192.168.150.4}]
       customize:
-        cpus: 2
+        cpus: 4
         memory: 4096
 
 suites:
