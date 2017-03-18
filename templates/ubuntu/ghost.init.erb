@@ -51,7 +51,7 @@ do_start()
     #   2 if daemon could not be started
     start-stop-daemon --start --quiet \
         --chuid $GHOST_USER:$GHOST_GROUP --chdir $GHOST_ROOT --background \
-        --pidfile $PIDFILE --make-pidfile --startas $DAEMON --test > /dev/null \
+        --pidfile $PIDFILE --make-pidfile --startas $DAEMON --test >> /var/log/$NAME \
         || return 1
     start-stop-daemon --start --quiet \
         --chuid $GHOST_USER:$GHOST_GROUP --chdir $GHOST_ROOT --background \
